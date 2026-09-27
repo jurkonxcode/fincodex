@@ -1,331 +1,72 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0d1117">
-<title>Fincodex — Editor Kode Live</title>
-<style>
-  :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --panel-2: #1c2128;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --accent-2: #3fb950;
-    --text: #e6edf3;
-    --text-dim: #8b949e;
-    --code: #7ee787;
-    --radius: 12px;
-    --shadow: 0 8px 24px rgba(0,0,0,0.4);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  html, body { height: 100%; overflow: hidden; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: 100dvh;
-  }
-
-  /* ===== HEADER ===== */
-  header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .logo {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #58a6ff, #3fb950);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 16px; color: #0d1117;
-    box-shadow: 0 0 12px rgba(88,166,255,0.4);
-    animation: pulse 3s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 12px rgba(88,166,255,0.4); }
-    50% { box-shadow: 0 0 20px rgba(63,185,80,0.6); }
-  }
-
-  .title {
-    font-size: 17px; font-weight: 700;
-    background: linear-gradient(90deg, #58a6ff, #3fb950);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 0.5px;
-  }
-
-  .subtitle {
-    font-size: 11px; color: var(--text-dim);
-    margin-left: auto; font-weight: 500;
-  }
-
-  /* ===== MAIN ===== */
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* ===== PANEL ===== */
-  .panel {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: flex 0.3s ease;
-  }
-
-  .panel.editor { flex: 1 1 50%; }
-  .panel.preview { flex: 1 1 50%; border-top: 1px solid var(--border); }
-
-  .panel-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: var(--panel);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-dim);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    flex-shrink: 0;
-  }
-
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot.red { background: #ff5f56; }
-  .dot.yellow { background: #ffbd2e; }
-  .dot.green { background: #27c93f; }
-
-  .panel-header .badge {
-    margin-left: auto;
-    padding: 2px 8px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    font-size: 9px;
-    color: var(--accent-2);
-    text-transform: none;
-    letter-spacing: 0;
-    animation: fadeIn 0.4s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ===== EDITOR ===== */
-  #codeInput {
-    flex: 1;
-    width: 100%;
-    padding: 14px;
-    background: var(--bg);
-    color: var(--code);
-    border: none;
-    outline: none;
-    resize: none;
-    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    tab-size: 2;
-    caret-color: var(--accent);
-  }
-
-  #codeInput::placeholder { color: #484f58; }
-
-  #codeInput::-webkit-scrollbar { width: 6px; }
-  #codeInput::-webkit-scrollbar-thumb {
-    background: var(--border); border-radius: 3px;
-  }
-
-  /* ===== PREVIEW ===== */
-  #preview {
-    flex: 1;
-    width: 100%;
-    border: none;
-    background: #ffffff;
-    transition: opacity 0.2s ease;
-  }
-
-  /* ===== FOOTER ===== */
-  footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px;
-    background: var(--panel);
-    border-top: 1px solid var(--border);
-    font-size: 10px;
-    color: var(--text-dim);
-    flex-shrink: 0;
-  }
-
-  .status {
-    display: flex; align-items: center; gap: 6px;
-  }
-
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--accent-2);
-    box-shadow: 0 0 8px var(--accent-2);
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* ===== TOAST ===== */
-  .toast {
-    position: fixed;
-    bottom: 60px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--panel-2);
-    color: var(--text);
-    padding: 10px 20px;
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    font-size: 12px;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="Fincodex — Live Code Editor untuk Android">
+  <title>Fincodex</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
 
-<header>
-  <div class="logo">&lt;/&gt;</div>
-  <div class="title">Fincodex</div>
-  <div class="subtitle">v1.0</div>
-</header>
-
-<main>
-  <section class="panel editor">
-    <div class="panel-header">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      &nbsp; index.html
-      <span class="badge" id="liveBadge">● LIVE</span>
+  <!-- ==================== HEADER ==================== -->
+  <header class="app-header">
+    <div class="app-logo" aria-hidden="true">&lt;/&gt;</div>
+    <div class="app-brand">
+      <h1>Fincodex</h1>
+      <p>Live Code Editor</p>
     </div>
-    <textarea id="codeInput" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="Tulis kode HTML di sini..."><!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-    }
-    h1 { font-size: 28px; }
-    p { font-size: 14px; opacity: 0.9; }
-  </style>
-</head>
-<body>
-  <h1>Halo, Fincodex! 👋</h1>
-  <p>Ubah kode di atas, hasilnya muncul di sini secara live.</p>
-</body>
-</html></textarea>
-  </section>
-
-  <section class="panel preview">
-    <div class="panel-header">
-      <span class="dot green"></span>
-      &nbsp; Hasil Live
+    <div class="app-actions">
+      <button id="btnReset" class="icon-btn" aria-label="Reset kode">↺</button>
+      <button id="btnExport" class="icon-btn" aria-label="Export kode">⬇</button>
     </div>
-    <iframe id="preview" sandbox="allow-scripts allow-modals allow-forms"></iframe>
-  </section>
-</main>
+  </header>
 
-<footer>
-  <div class="status">
-    <span class="status-dot"></span>
-    <span id="statusText">Siap mengetik...</span>
-  </div>
-  <div id="charCount">0 karakter</div>
-</footer>
+  <!-- ==================== LANGUAGE TABS ==================== -->
+  <nav class="lang-tabs" role="tablist" aria-label="Pilih bahasa">
+    <button class="lang-tab active" role="tab" data-lang="html">HTML</button>
+    <button class="lang-tab" role="tab" data-lang="css">CSS</button>
+    <button class="lang-tab" role="tab" data-lang="js">JS</button>
+  </nav>
 
-<div class="toast" id="toast">Tersimpan otomatis ✓</div>
+  <!-- ==================== MAIN ==================== -->
+  <main class="app-main">
 
-<script>
-  const codeInput = document.getElementById('codeInput');
-  const preview = document.getElementById('preview');
-  const statusText = document.getElementById('statusText');
-  const charCount = document.getElementById('charCount');
-  const toast = document.getElementById('toast');
+    <!-- Editor Section -->
+    <section class="panel panel-editor" aria-label="Editor kode">
+      <textarea
+        id="editor"
+        class="editor"
+        spellcheck="false"
+        autocapitalize="off"
+        autocorrect="off"
+        placeholder="Tulis kode di sini..."
+        aria-label="Area kode"></textarea>
+    </section>
 
-  let debounceTimer = null;
-  let toastTimer = null;
+    <!-- Output Section -->
+    <section class="panel panel-output" aria-label="Hasil">
+      <div class="output-tabs" role="tablist">
+        <button class="out-tab active" role="tab" data-view="preview">Preview</button>
+        <button class="out-tab" role="tab" data-view="console">Console</button>
+        <span class="status-badge" id="status">Ready</span>
+      </div>
+      <div class="output-body">
+        <iframe
+          id="preview"
+          class="preview"
+          sandbox="allow-scripts allow-modals allow-forms allow-popups"
+          title="Preview hasil kode"></iframe>
+        <div id="console" class="console hidden" role="log" aria-live="polite"></div>
+      </div>
+    </section>
 
-  function renderPreview() {
-    const code = codeInput.value;
-    preview.srcdoc = code;
-    statusText.textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID');
-    charCount.textContent = code.length + ' karakter';
+  </main>
 
-    try {
-      localStorage.setItem('fincodex_code', code);
-    } catch (e) {}
-
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 1200);
-  }
-
-  // Live update dengan debounce 400ms
-  codeInput.addEventListener('input', () => {
-    statusText.textContent = 'Mengetik...';
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(renderPreview, 400);
-  });
-
-  // Muat kode tersimpan
-  window.addEventListener('load', () => {
-    try {
-      const saved = localStorage.getItem('fincodex_code');
-      if (saved) codeInput.value = saved;
-    } catch (e) {}
-    renderPreview();
-  });
-
-  // Dukungan tombol Tab untuk indentasi
-  codeInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const start = codeInput.selectionStart;
-      const end = codeInput.selectionEnd;
-      codeInput.value = codeInput.value.substring(0, start) + '  ' + codeInput.value.substring(end);
-      codeInput.selectionStart = codeInput.selectionEnd = start + 2;
-    }
-  });
-</script>
-
+  <!-- ==================== SCRIPTS ==================== -->
+  <!-- Nanti diisi di Iterasi 2+ -->
 </body>
 </html>
