@@ -1,6 +1,6 @@
 /* ============================================================
-   Fincodex — Layout
-   Kerangka utama: reset, body, header, tabs, main, panel.
+   Fincodex — Layout v2 (Premium)
+   Header dengan glassmorphism, struktur lebih rapi.
    ============================================================ */
 
 /* ---------- RESET ---------- */
@@ -17,77 +17,139 @@ html, body {
 }
 
 body {
-  background: var(--bg-primary);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%,
+      rgba(88, 166, 255, 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 100%,
+      rgba(63, 185, 80, 0.05), transparent 70%),
+    var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
   display: flex;
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ---------- HEADER ---------- */
+/* ---------- HEADER (Glassmorphism) ---------- */
 .app-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  background: linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
+  position: relative;
+  z-index: var(--z-dropdown);
 }
 
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(88, 166, 255, 0.4),
+    transparent);
+  opacity: 0.6;
+}
+
+/* Logo */
 .app-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(135deg,
+      var(--accent-blue) 0%,
+      var(--accent-purple) 50%,
+      var(--accent-green) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
+  font-weight: var(--weight-black);
   font-size: 13px;
   color: var(--bg-primary);
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.4);
-  animation: logoPulse 3s ease-in-out infinite;
+  box-shadow:
+    var(--shadow-sm),
+    0 0 20px rgba(88, 166, 255, 0.4);
+  animation: logoPulse 3.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-logo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 50%);
+  pointer-events: none;
 }
 
 @keyframes logoPulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(88, 166, 255, 0.4); }
-  50%      { box-shadow: 0 0 20px rgba(63, 185, 80, 0.6); }
+  0%, 100% {
+    box-shadow:
+      var(--shadow-sm),
+      0 0 20px rgba(88, 166, 255, 0.4);
+  }
+  50% {
+    box-shadow:
+      var(--shadow-sm),
+      0 0 30px rgba(188, 140, 255, 0.6);
+  }
+}
+
+/* Brand */
+.app-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .app-brand h1 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+  background: linear-gradient(120deg,
+    var(--accent-blue-bright) 0%,
+    var(--accent-purple) 50%,
+    var(--accent-green-bright) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .app-brand p {
-  font-size: 10px;
-  color: var(--text-secondary);
-  letter-spacing: 0.5px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  letter-spacing: 0.6px;
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
 }
 
+/* Actions */
 .app-actions {
   margin-left: auto;
   display: flex;
   gap: var(--space-2);
 }
 
-/* ---------- LANGUAGE TABS ---------- */
+/* ---------- LANGUAGE TABS CONTAINER ---------- */
 .lang-tabs {
-  display: flex;
-  gap: var(--space-1);
-  padding: var(--space-2) var(--space-3) 0;
-  background: var(--bg-primary);
+  margin: var(--space-3) var(--space-3) 0;
   flex-shrink: 0;
 }
 
@@ -97,24 +159,76 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3) var(--space-3);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-4);
 }
 
+/* ---------- PANEL ---------- */
 .panel {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg,
+    var(--bg-secondary) 0%,
+    var(--bg-primary) 100%);
+  box-shadow:
+    var(--shadow-md),
+    var(--shadow-inset-top);
+  position: relative;
+  transition: box-shadow var(--duration-base) var(--ease-out);
 }
 
-.panel-editor  { flex: 1 1 50%; }
-.panel-output  { flex: 1 1 50%; }
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(88, 166, 255, 0.3),
+    transparent);
+  pointer-events: none;
+}
+
+.panel-editor {
+  flex: 1 1 50%;
+  min-height: 0;
+}
+
+.panel-output {
+  flex: 1 1 50%;
+  min-height: 0;
+}
 
 .output-body {
   flex: 1;
   position: relative;
   overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ---------- SCROLLBAR GLOBAL ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ---------- SELECTION ---------- */
+::selection {
+  background: rgba(88, 166, 255, 0.3);
+  color: var(--text-primary);
 }
