@@ -1,0 +1,10 @@
+{
+  "name": "Fincodex",
+  "short_name": "Fincodex",
+  "description": "Live Code Editor untuk Android",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "orientation": "portrait"
+}
